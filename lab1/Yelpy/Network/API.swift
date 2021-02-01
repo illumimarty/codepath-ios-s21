@@ -16,7 +16,7 @@ struct API {
     static func getRestaurants(completion: @escaping ([[String:Any]]?) -> Void) {
         
         // ––––– TODO: Add your own API key!
-        let apikey = ""
+        let apikey = "Z8LcEge0KsF6qTnAxkfpGI6Y1_9jTJnSCWpNdioOK9k1jsY-QcJgCxewDdj8PDNlMoMtpNeQihaBPHl0bOOhHwU2RkMg1YZtkI_uldR3UoS7isXQyAp2RuwuaNcQYHYx"
         
         // Coordinates for San Francisco
         let lat = 37.773972
@@ -31,6 +31,7 @@ struct API {
         request.setValue("Bearer \(apikey)", forHTTPHeaderField: "Authorization")
         
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: OperationQueue.main)
+        
         let task = session.dataTask(with: request) { (data, response, error) in
             // This will run when the network request returns
             if let error = error {
@@ -41,10 +42,16 @@ struct API {
 
                 // ––––– TODO: Get data from API and return it using completion
                 
+                print(data)
                 
+                // 1. Convert json response to a dictionary
+                    let dataDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
                 
-                return completion([[:]])
+                // 2. Grab the businesses data and convert it to an array of dictionaries for each restaurant
+                    let restaurants = dataDictionary["businesses"] as! [[String: Any]]
                 
+                // 3. Completion is an esacaping method which allows the data to be used outside of the closure
+                    return completion(restaurants)
                 }
             }
         
